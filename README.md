@@ -54,6 +54,33 @@ atcoder-companion/
 └── browser-extension/
 ````
 
+
+
+
+# Clone Repository
+
+Run:
+
+```bash
+git clone https://github.com/NoobTheLoop/atcoder-companion.git
+````
+
+Then go inside the project:
+
+```bash
+cd atcoder-companion
+```
+
+
+
+
+
+
+
+
+
+
+
 ---
 
 # Requirements
@@ -89,11 +116,26 @@ Supported browsers:
 
 ---
 
+
 # Installation
+
 
 # VS Code Extension
 
 ## Install from VSIX
+
+Go to the `atcoderhelper` folder.
+
+you will see:
+
+atcoderhelper-0.0.1.vsix
+
+
+inside the `atcoderhelper` folder.
+
+Download/use that file.
+
+### Install Steps
 
 1. Open VS Code
 2. Go to Extensions
@@ -104,9 +146,14 @@ Supported browsers:
 Install from VSIX
 ```
 
-5. Choose generated `.vsix` file
+5. Choose:
 
----
+```text
+atcoderhelper-0.0.1.vsix
+```
+
+
+
 
 # Browser Extension
 
@@ -128,7 +175,7 @@ Developer Mode
 Load unpacked
 ```
 
-4. Select browser extension folder
+4. Select web extension folder
 
 ---
 
