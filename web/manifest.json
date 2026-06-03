@@ -20,6 +20,12 @@
     "service_worker": "background.js"
   },
 
+  "icons": {
+    "16": "image/round-add-button.png",
+    "48": "image/round-add-button.png",
+    "128": "image/round-add-button.png"
+  },
+
   "action": {
     "default_title": "AtCoder Companion"
   },
