@@ -177,6 +177,7 @@ Load unpacked
 
 4. Select web extension folder
 5. Website may require permission so Allow them
+6. Note : if problem is not opening in the VS Code . Then refresh the atcoder website.
    
 
 ---
@@ -206,6 +207,8 @@ Write code in VS Code.
 ## Run Testcases
 
 Use testcase panel.
+
+After All Testcase have run then submit The code .
 
 ## Submit
 
