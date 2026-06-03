@@ -176,6 +176,8 @@ Load unpacked
 ```
 
 4. Select web extension folder
+5. Website may require permission so Allow them
+   
 
 ---
 
@@ -209,11 +211,6 @@ Use testcase panel.
 
 Click submit in testcase panel.
 
----
-
-
-
-after making changes.
 
 ---
 
