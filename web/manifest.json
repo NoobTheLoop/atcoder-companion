@@ -1,0 +1,38 @@
+
+{
+  "manifest_version": 3,
+
+  "name": "AtCoder Companion",
+
+  "version": "1.0",
+
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+
+  "host_permissions": [
+    "https://atcoder.jp/*",
+    "http://localhost:10043/*"
+  ],
+
+  "background": {
+    "service_worker": "background.js"
+  },
+
+  "action": {
+    "default_title": "AtCoder Companion"
+  },
+
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "inject.js"
+      ],
+
+      "matches": [
+        "https://atcoder.jp/*"
+      ]
+    }
+  ]
+}
