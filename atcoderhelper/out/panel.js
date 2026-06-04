@@ -58,8 +58,22 @@ function openTestcasePanel(samples) {
         // =========================
         if (message.type ===
             'submit') {
+            const editor = vscode.window
+                .visibleTextEditors
+                .find((x) => x.document.uri.fsPath
+                .endsWith('.cpp'));
+            if (!editor) {
+                vscode.window
+                    .showErrorMessage('No cpp file open');
+                return;
+            }
+            const cpp = editor.document
+                .uri
+                .fsPath;
+            const code = fs.readFileSync(cpp, 'utf8');
             await axios.post('http://localhost:10043/submit', {
-                type: 'submit'
+                type: 'submit',
+                code: code
             });
             vscode.window
                 .showInformationMessage('Submit Sent');
@@ -68,26 +82,6 @@ function openTestcasePanel(samples) {
         // RUN
         // =========================
         if (message.type === 'run') {
-            // =========================
-            // STORE CURRENT CODE
-            // =========================
-            const editor = vscode.window
-                .visibleTextEditors
-                .find((x) => x.document.uri.fsPath
-                .endsWith('.cpp'));
-            if (!editor) {
-                return;
-            }
-            const cpp = editor.document
-                .uri
-                .fsPath;
-            const code = fs.readFileSync(cpp, 'utf8');
-            await axios.post('http://localhost:10043/code', {
-                code: code
-            });
-            // =========================
-            // RUN CODE
-            // =========================
             const workspaceFolders = vscode.workspace.workspaceFolders;
             if (!workspaceFolders) {
                 return;
@@ -95,9 +89,7 @@ function openTestcasePanel(samples) {
             const folder = workspaceFolders[0]
                 .uri.fsPath;
             const result = await (0, runner_1.runCpp)(folder, message.input);
-            // =========================
             // COMPILATION ERROR
-            // =========================
             if (!result.success &&
                 result.type ===
                     'compile') {
@@ -108,9 +100,7 @@ function openTestcasePanel(samples) {
                 });
                 return;
             }
-            // =========================
             // TLE
-            // =========================
             if (!result.success &&
                 result.type ===
                     'tle') {
@@ -120,9 +110,7 @@ function openTestcasePanel(samples) {
                 });
                 return;
             }
-            // =========================
             // RUNTIME ERROR
-            // =========================
             if (result.error &&
                 result.error.length > 0) {
                 panel.webview.postMessage({

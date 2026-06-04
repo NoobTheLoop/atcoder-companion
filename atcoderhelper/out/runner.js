@@ -1,32 +1,29 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setCppPath = setCppPath;
-exports.getCppPath = getCppPath;
 exports.runCpp = runCpp;
 const child_process_1 = require("child_process");
 const fs = require('fs');
 const path = require('path');
-let currentCppPath = '';
-function setCppPath(cpp) {
-    currentCppPath =
-        cpp;
-}
-function getCppPath() {
-    return currentCppPath;
-}
+const vscode = require('vscode');
 function runCpp(folder, input) {
     return new Promise((resolve) => {
         // =========================
-        // CURRENT CPP FILE
+        // CURRENT OPEN CPP FILE
         // =========================
-        const cpp = currentCppPath;
-        if (!cpp) {
+        const editor = vscode.window
+            .visibleTextEditors
+            .find((x) => x.document.uri.fsPath
+            .endsWith('.cpp'));
+        if (!editor) {
             resolve({
                 success: false,
                 type: 'compile'
             });
             return;
         }
+        const cpp = editor.document
+            .uri
+            .fsPath;
         console.log('COMPILING FILE = ', cpp);
         const cppFile = path.basename(cpp);
         // =========================
@@ -35,7 +32,9 @@ function runCpp(folder, input) {
         const exeName = cppFile.replace('.cpp', '.exe');
         const exe = path.join(path.dirname(cpp), exeName);
         console.log('EXE PATH = ', exe);
+        // =========================
         // DELETE OLD EXE
+        // =========================
         if (fs.existsSync(exe)) {
             try {
                 fs.unlinkSync(exe);
@@ -95,17 +94,23 @@ function runCpp(folder, input) {
                     type: 'tle'
                 });
             }, 2000);
+            // =========================
             // STDOUT
+            // =========================
             run.stdout.on('data', (data) => {
                 output +=
                     data.toString();
             });
+            // =========================
             // STDERR
+            // =========================
             run.stderr.on('data', (data) => {
                 error +=
                     data.toString();
             });
+            // =========================
             // FINISH
+            // =========================
             run.on('close', () => {
                 if (finished) {
                     return;
@@ -120,7 +125,9 @@ function runCpp(folder, input) {
                     output: output.trim()
                 });
             });
+            // =========================
             // SEND INPUT
+            // =========================
             run.stdin.write(input);
             run.stdin.end();
         });

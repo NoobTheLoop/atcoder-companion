@@ -39,10 +39,8 @@ const vscode = __importStar(require("vscode"));
 const express = require("express");
 const cors = require("cors");
 const panel_1 = require("./panel");
-const runner_1 = require("./runner");
 const fs = require('fs');
 const path = require('path');
-let latestCode = null;
 let latestSubmit = null;
 function activate(context) {
     console.log('AtCoder Helper Active');
@@ -56,67 +54,7 @@ function activate(context) {
         res.send('AtCoder Helper Running');
     });
     // =========================
-    // GET CURRENT CODE
-    // =========================
-    app.get('/code', (req, res) => {
-        try {
-            const editor = vscode.window
-                .activeTextEditor;
-            if (!editor) {
-                res.json({
-                    success: false
-                });
-                return;
-            }
-            const cpp = editor.document
-                .uri
-                .fsPath;
-            console.log('ACTIVE CPP = ', cpp);
-            if (!cpp.endsWith('.cpp')) {
-                res.json({
-                    success: false
-                });
-                return;
-            }
-            const code = fs.readFileSync(cpp, 'utf8');
-            res.json({
-                success: true,
-                code: code
-            });
-        }
-        catch (err) {
-            console.log(err);
-            res.json({
-                success: false
-            });
-        }
-    });
-    // =========================
-    // STORE CURRENT CODE
-    // =========================
-    app.post('/code', (req, res) => {
-        latestCode =
-            req.body;
-        console.log('CODE STORED');
-        res.json({
-            success: true
-        });
-    });
-    // =========================
-    // GET CURRENT CODE
-    // =========================
-    app.get('/code', (req, res) => {
-        if (latestCode) {
-            res.json(latestCode);
-        }
-        else {
-            res.json({
-                type: 'none'
-            });
-        }
-    });
-    // =========================
-    // RECEIVE SUBMIT REQUEST
+    // RECEIVE SUBMIT
     // =========================
     app.post('/submit', (req, res) => {
         latestSubmit =
@@ -159,7 +97,7 @@ function activate(context) {
                 });
                 return;
             }
-            // ROOT = OPENED FOLDER
+            // ROOT FOLDER
             const folder = workspaceFolders[0]
                 .uri.fsPath;
             // SAFE FILE NAME
@@ -167,14 +105,7 @@ function activate(context) {
             const safeCppName = safeTitle
                 .replace(/\s+/g, '_');
             const cpp = path.join(folder, safeCppName + '.cpp');
-            // =========================
-            // SAVE CURRENT CPP
-            // =========================
-            (0, runner_1.setCppPath)(cpp);
-            console.log('SET CPP PATH = ', cpp);
-            // =========================
             // FILE EXISTS
-            // =========================
             if (fs.existsSync(cpp)) {
                 const doc = await vscode.workspace.openTextDocument(cpp);
                 await vscode.window.showTextDocument(doc);
@@ -187,9 +118,7 @@ using namespace std;
                 const doc = await vscode.workspace.openTextDocument(cpp);
                 await vscode.window.showTextDocument(doc);
             }
-            // =========================
             // OPEN TESTCASE PANEL
-            // =========================
             (0, panel_1.openTestcasePanel)(data.samples);
             res.json({
                 success: true
