@@ -13,21 +13,9 @@ import {
 
 } from './panel';
 
-import {
-
-    setCppPath,
-
-    getCppPath
-
-} from './runner';
-
 const fs = require('fs');
 
 const path = require('path');
-
-let latestCode:any =
-    null;
-
 
 let latestSubmit:any =
     null;
@@ -63,137 +51,7 @@ export function activate(
     );
 
     // =========================
-    // GET CURRENT CODE
-    // =========================
-    
-app.get(
-
-    '/code',
-
-    (req,res)=>{
-
-        try{
-
-            const editor =
-                vscode.window
-                .activeTextEditor;
-
-            if(
-                !editor
-            ){
-
-                res.json({
-
-                    success:false
-                });
-
-                return;
-            }
-
-            const cpp =
-                editor.document
-                .uri
-                .fsPath;
-
-            console.log(
-                'ACTIVE CPP = ',
-                cpp
-            );
-
-            if(
-                !cpp.endsWith('.cpp')
-            ){
-
-                res.json({
-
-                    success:false
-                });
-
-                return;
-            }
-
-            const code =
-                fs.readFileSync(
-
-                    cpp,
-
-                    'utf8'
-                );
-
-            res.json({
-
-                success:true,
-
-                code:code
-            });
-        }
-        catch(err){
-
-            console.log(err);
-
-            res.json({
-
-                success:false
-            });
-        }
-    }
-);
-
-// =========================
-// STORE CURRENT CODE
-// =========================
-app.post(
-
-    '/code',
-
-    (req,res)=>{
-
-        latestCode =
-            req.body;
-
-        console.log(
-            'CODE STORED'
-        );
-
-        res.json({
-
-            success:true
-        });
-    }
-);
-
-// =========================
-// GET CURRENT CODE
-// =========================
-app.get(
-
-    '/code',
-
-    (req,res)=>{
-
-        if(
-            latestCode
-        ){
-
-            res.json(
-                latestCode
-            );
-        }
-        else{
-
-            res.json({
-
-                type:'none'
-            });
-        }
-    }
-);
-
-
-
-
-    // =========================
-    // RECEIVE SUBMIT REQUEST
+    // RECEIVE SUBMIT
     // =========================
     app.post(
 
@@ -290,7 +148,7 @@ app.get(
                     return;
                 }
 
-                // ROOT = OPENED FOLDER
+                // ROOT FOLDER
                 const folder =
                     workspaceFolders[0]
                     .uri.fsPath;
@@ -314,19 +172,7 @@ app.get(
                         safeCppName + '.cpp'
                     );
 
-                // =========================
-                // SAVE CURRENT CPP
-                // =========================
-                setCppPath(cpp);
-
-                console.log(
-                    'SET CPP PATH = ',
-                    cpp
-                );
-
-                // =========================
                 // FILE EXISTS
-                // =========================
                 if(
                     fs.existsSync(cpp)
                 ){
@@ -362,9 +208,7 @@ using namespace std;
                     );
                 }
 
-                // =========================
                 // OPEN TESTCASE PANEL
-                // =========================
                 openTestcasePanel(
                     data.samples
                 );

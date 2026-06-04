@@ -7,21 +7,8 @@ const fs =
 const path =
     require('path');
 
-let currentCppPath =
-    '';
-
-export function setCppPath(
-    cpp:string
-){
-
-    currentCppPath =
-        cpp;
-}
-
-export function getCppPath(){
-
-    return currentCppPath;
-}
+const vscode =
+    require('vscode');
 
 export function runCpp(
     folder:string,
@@ -31,13 +18,21 @@ export function runCpp(
     return new Promise((resolve)=>{
 
         // =========================
-        // CURRENT CPP FILE
+        // CURRENT OPEN CPP FILE
         // =========================
-        const cpp =
-            currentCppPath;
+        const editor =
+            vscode.window
+            .visibleTextEditors
+            .find(
+
+                (x:any)=>
+
+                    x.document.uri.fsPath
+                    .endsWith('.cpp')
+            );
 
         if(
-            !cpp
+            !editor
         ){
 
             resolve({
@@ -49,6 +44,11 @@ export function runCpp(
 
             return;
         }
+
+        const cpp =
+            editor.document
+            .uri
+            .fsPath;
 
         console.log(
             'COMPILING FILE = ',
@@ -78,7 +78,9 @@ export function runCpp(
             exe
         );
 
+        // =========================
         // DELETE OLD EXE
+        // =========================
         if(
             fs.existsSync(exe)
         ){
@@ -120,7 +122,7 @@ export function runCpp(
 
             'data',
 
-            (data)=>{
+            (data:any)=>{
 
                 compileError +=
                     data.toString();
@@ -131,7 +133,7 @@ export function runCpp(
 
             'close',
 
-            (code)=>{
+            (code:any)=>{
 
                 // =========================
                 // COMPILATION ERROR
@@ -210,31 +212,37 @@ export function runCpp(
 
                     },2000);
 
+                // =========================
                 // STDOUT
+                // =========================
                 run.stdout.on(
 
                     'data',
 
-                    (data)=>{
+                    (data:any)=>{
 
                         output +=
                             data.toString();
                     }
                 );
 
+                // =========================
                 // STDERR
+                // =========================
                 run.stderr.on(
 
                     'data',
 
-                    (data)=>{
+                    (data:any)=>{
 
                         error +=
                             data.toString();
                     }
                 );
 
+                // =========================
                 // FINISH
+                // =========================
                 run.on(
 
                     'close',
@@ -275,7 +283,9 @@ export function runCpp(
                     }
                 );
 
+                // =========================
                 // SEND INPUT
+                // =========================
                 run.stdin.write(
                     input
                 );

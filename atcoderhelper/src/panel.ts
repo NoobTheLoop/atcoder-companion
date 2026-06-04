@@ -57,32 +57,6 @@ export function openTestcasePanel(
                 'submit'
             ){
 
-                await axios.post(
-
-                    'http://localhost:10043/submit',
-
-                    {
-
-                        type:'submit'
-                    }
-                );
-
-                vscode.window
-                .showInformationMessage(
-                    'Submit Sent'
-                );
-            }
-
-            // =========================
-            // RUN
-            // =========================
-            if (
-                message.type === 'run'
-            ) {
-
-                // =========================
-                // STORE CURRENT CODE
-                // =========================
                 const editor =
                     vscode.window
                     .visibleTextEditors
@@ -97,6 +71,11 @@ export function openTestcasePanel(
                 if(
                     !editor
                 ){
+
+                    vscode.window
+                    .showErrorMessage(
+                        'No cpp file open'
+                    );
 
                     return;
                 }
@@ -116,17 +95,29 @@ export function openTestcasePanel(
 
                 await axios.post(
 
-                    'http://localhost:10043/code',
+                    'http://localhost:10043/submit',
 
                     {
+
+                        type:'submit',
 
                         code:code
                     }
                 );
 
-                // =========================
-                // RUN CODE
-                // =========================
+                vscode.window
+                .showInformationMessage(
+                    'Submit Sent'
+                );
+            }
+
+            // =========================
+            // RUN
+            // =========================
+            if (
+                message.type === 'run'
+            ) {
+
                 const workspaceFolders =
                     vscode.workspace.workspaceFolders;
 
@@ -147,9 +138,7 @@ export function openTestcasePanel(
                         message.input
                     );
 
-                // =========================
                 // COMPILATION ERROR
-                // =========================
                 if (
                     !result.success &&
                     result.type ===
@@ -171,9 +160,7 @@ export function openTestcasePanel(
                     return;
                 }
 
-                // =========================
                 // TLE
-                // =========================
                 if (
                     !result.success &&
                     result.type ===
@@ -192,9 +179,7 @@ export function openTestcasePanel(
                     return;
                 }
 
-                // =========================
                 // RUNTIME ERROR
-                // =========================
                 if(
                     result.error &&
                     result.error.length > 0

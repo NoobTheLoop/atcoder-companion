@@ -52,25 +52,6 @@ else{
                     return;
                 }
 
-                // =========================
-                // FETCH LATEST CODE
-                // =========================
-                const codeResponse =
-                    await fetch(
-                        'http://localhost:10043/code'
-                    );
-
-                const codeData =
-                    await codeResponse.json();
-
-                if(
-                    codeData.type ===
-                    'none'
-                ){
-
-                    return;
-                }
-
                 submitting =
                     true;
 
@@ -78,11 +59,16 @@ else{
                     'AUTO SUBMIT'
                 );
 
-                // inject submit script
+                // =========================
+                // CREATE SCRIPT
+                // =========================
                 const script =
                     document.createElement(
                         'script'
                     );
+
+                script.dataset.code =
+                    submitData.code;
 
                 script.src =
                     chrome.runtime.getURL(
@@ -94,16 +80,14 @@ else{
                     script.remove();
                 };
 
-                // pass code
-                script.dataset.code =
-                    codeData.code;
-
                 (
                     document.head ||
                     document.documentElement
                 ).appendChild(script);
 
-                // unlock later
+                // =========================
+                // UNLOCK
+                // =========================
                 setTimeout(()=>{
 
                     submitting =
